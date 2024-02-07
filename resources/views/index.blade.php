@@ -38,9 +38,9 @@
 <body>
     @include('navbar')
     @include('sidebar')
- 
-            @yield('form')
-            @yield('dashboard')
+
+    @yield('form')
+    @yield('dashboard')
 
     @include('footer')
 </body>
@@ -58,8 +58,25 @@
 
 <script>
     $(document).ready(function() {
+        image.onchange = evt => {
+            const [file] = image.files
+            if (file) {
+                preview.src = URL.createObjectURL(file)
+            }
+        }
+
+        $('#myModal').on('hidden.bs.modal', function(e) {
+            $('#preview').attr('src', '')
+        })
+
+        $('#addbtn').click(function() {
+            $('#myModal').modal('show');
+            $('#my-form').trigger("reset");
+        })
 
         $('#my-form').on('submit', function() {
+            $('#myModal').modal('hide')
+
             $.ajax({
                 method: "POST",
                 url: "{{ route('fakeapp.appview') }}",
@@ -68,7 +85,9 @@
                 contentType: false,
                 cache: false,
                 success: function(data) {
-                    $('#my-form')[0].reset();
+                    $('#my-form').trigger("reset");
+                    $('#myModal').modal('hide');
+                    $('#preview').attr('src', '')
                     $('#output').text(data.res);
                     datatable.ajax.reload();
                 },
@@ -111,6 +130,7 @@
 
         $(document).on('click', '.edit', function() {
             let editId = $(this).attr('id');
+            $('#myModal').modal('show');
             $.ajax({
                 method: "POST",
                 url: "{{ route('fakeapp.edit') }}",

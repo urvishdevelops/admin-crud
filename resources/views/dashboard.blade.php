@@ -1,5 +1,5 @@
 @extends('index');
 
-@section('form')
+@section('dashboard');
 
 @endsection
